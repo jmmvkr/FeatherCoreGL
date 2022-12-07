@@ -7,11 +7,11 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "Common.h"
 
 #pragma comment(lib, "glfw3.lib")
 #pragma comment(lib, "opengl32.lib")
 
-#define NL    "\n"
 #define DEF_WIDTH    1280
 #define DEF_HEIGHT   720
 #define DEF_X        80
@@ -20,6 +20,8 @@
 #define SCR_NORMAL      (0)
 #define SCR_FULL        (1)
 #define SCR_CHANGING    (2)
+
+#define NO_SHADER    (0)
 
 typedef void(*fpPtr)(void*);
 typedef void(*fpVoid)();
