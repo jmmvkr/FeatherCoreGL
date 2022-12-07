@@ -37,7 +37,7 @@ void render(void);
 void processInput(void* window);
 
 // logic related to window handling
-void onWindowClose(GLFWwindow* pWnd);
+void onWindowClose(GLFWwindow* window);
 void onResizeWindow(GLFWwindow* window, int w, int h);
 int tryClose(void);
 
