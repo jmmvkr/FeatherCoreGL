@@ -3,8 +3,8 @@
 
 #include <iostream>
 
-#include "CoreWindow.h"
-#include "CoreInput.h"
+#include "feather/core/CoreWindow.h"
+#include "feather/core/CoreInput.h"
 #include "BgCos.h"
 
 

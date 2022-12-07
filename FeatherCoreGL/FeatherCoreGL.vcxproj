@@ -155,14 +155,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CoreWindow.cpp" />
+    <ClCompile Include="feather/core/CoreWindow.cpp" />
     <ClCompile Include="FeatherCoreGL.cpp" />
     <ClCompile Include="glad.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BgCos.h" />
-    <ClInclude Include="CoreInput.h" />
-    <ClInclude Include="CoreWindow.h" />
+    <ClInclude Include="feather/core/CoreWindow.h" />
+    <ClInclude Include="feather/core/CoreInput.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
