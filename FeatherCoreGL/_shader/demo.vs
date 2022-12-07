@@ -11,12 +11,13 @@ out vec3 outNormal;
 uniform mat4 model;
 uniform mat4 pv;
 
-void main(){
-	vec4 mpos = model * vec4(aPos, 1.0);
+void main()
+{
+    vec4 mpos = model * vec4(aPos, 1.0);
     gl_Position = pv * mpos;
-	outPos = mpos.xyz;
-	outNormal = aNormal;
+    outPos = mpos.xyz;
+    outNormal = aNormal;
 
     vertexColor = vec3(1.0f, 1.f, 1.0f);
-	TexCoord = vec2(aTexCoord.x, aTexCoord.y);
+    TexCoord = vec2(aTexCoord.x, aTexCoord.y);
 }
