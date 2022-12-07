@@ -5,6 +5,7 @@
 
 #include "feather/core/CoreWindow.h"
 #include "feather/core/CoreInput.h"
+#include "feather/core/Shader.h"
 #include "BgCos.h"
 
 
@@ -62,6 +63,9 @@ void init(void)
 	gladLoadGL();
 	g_bg.nMax = 60;
 	g_bg.cosEffect.color = BgCos::fromRgb(0.0f, 0.6f, 0.95f);
+
+	auto p = Shader::createProgram(L"_shader/demo.vs", L"_shader/demo.fs");
+	std::cout << " - shader linked? " << boolStr(p.bLinked) << NL;
 }
 
 void render(void)

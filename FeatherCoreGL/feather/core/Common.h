@@ -21,3 +21,5 @@ typedef int BOOL;
 #define FALSE    (0)
 #endif // !FALSE
 
+
+const char* boolStr(BOOL v);

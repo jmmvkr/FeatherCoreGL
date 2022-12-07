@@ -40,11 +40,9 @@ typedef struct st_GlProgram {
 	GLint prog;
 } GlProgram;
 
+
 class Shader
 {
-
-	typedef const GLchar *const* GLFixedString;
-
 
 public:
 

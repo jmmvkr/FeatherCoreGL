@@ -1,6 +1,12 @@
 #include "CoreWindow.h"
 #include <iostream>
 
+const char* boolStr(BOOL v)
+{
+	if (v) { return "true"; }
+	return "false";
+}
+
 void feather::core::st_CoreWindow::onCoreInfo(const char* msg)
 {
 	std::cout << "[info] " << msg << NL;
