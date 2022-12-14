@@ -5,17 +5,12 @@
 
 #include "feather/core/CoreWindow.h"
 #include "feather/core/CoreInput.h"
-#include "feather/core/Shader.h"
 #include "BgCos.h"
-#include "feather/core/Mesh.h"
-
+#include "Scene.h"
 
 using feather::core::CoreWindow;
 using feather::core::RenderContext;
 using feather::core::KeyHold;
-using feather::core::GlProgram;
-using feather::core::Shader;
-using feather::core::Mesh;
 
 
 // custom background effect
@@ -35,10 +30,7 @@ CoreWindow g_wnd = { 0 };
 BgEffect g_bg;
 KeyHold kPause = { 0, GLFW_KEY_SPACE };
 KeyHold kFullScr = { 0, GLFW_KEY_F11 };
-
-// [TODO] move to Scene Manager
-GlProgram p;
-Mesh mesh;
+Scene scene;
 
 
 // logic related to render context
@@ -73,11 +65,7 @@ void init(void)
 	g_bg.nMax = 60;
 	g_bg.cosEffect.color = BgCos::fromRgb(0.0f, 0.6f, 0.95f);
 
-	p = Shader::createProgram(L"_shader/demo.vs", L"_shader/demo.fs");
-	std::cout << " - shader linked? " << boolStr(p.bLinked) << NL;
-
-	mesh = Mesh::load("_media/mesh/ball.vb");
-	std::cout << " - mesh loaded? " << boolStr(mesh.bLoaded) << NL;
+	scene.init();
 }
 
 void render(void)
@@ -86,6 +74,8 @@ void render(void)
 	BgCos cos = bg.cosEffect;
 	cos.phi = BgCos::frame2Phi(bg.iCurFrame, bg.nMax, PI_X2);
 	cos.render();
+
+	scene.render();
 
 	if (!IS_PAUSED)
 	{

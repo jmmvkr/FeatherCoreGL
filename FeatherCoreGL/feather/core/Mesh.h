@@ -1,9 +1,22 @@
 #pragma once
 
 
+#include "RawTypes.h"
 #include "EBuffer.h"
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
+
+#ifdef _WIN64
+#include <windows.h>
+#endif
+
+
+#define GPU_UINT    u32
+#define GPU_SINT    i32
+
+#define PTR_V(x)  &x[0]
+#define PTR_M(x)  &x[0][0]
+
 
 namespace feather
 {
@@ -12,8 +25,8 @@ namespace feather
 
 		typedef struct st_VertexStride {
 			glm::vec3 pos;
-			glm::vec3 norm;
 			glm::vec2 texcoord;
+			glm::vec3 norm;
 		} VertexStride;
 
 		typedef struct st_Mesh {
@@ -36,7 +49,6 @@ namespace feather
 				}
 
 #ifdef _WIN64
-				int i;
 				auto len = GetCurrentDirectoryA((DWORD)szMax, buf);
 				char* ptr = &buf[len];
 
@@ -112,9 +124,9 @@ namespace feather
 
 				if (len >= 4)
 				{
-					// ensure extension (.vb or .ib) before loading
+					// ensure extension (.vx or .ix) before loading
 					const char* ptr = &path[len - 3];
-					if ((0 != strcmp(ptr, ".vb")) && (0 != strcmp(ptr, ".ib")))
+					if ((0 != strcmp(ptr, ".vx")) && (0 != strcmp(ptr, ".ix")))
 					{
 						return st;
 					}
@@ -138,6 +150,7 @@ namespace feather
 				char* buf = (char*)malloc(len);
 				if (buf)
 				{
+					fread_s(buf, len, len, 1, fp);
 					raw.len = len;
 					raw.bufferSize = len;
 					raw.data = buf;

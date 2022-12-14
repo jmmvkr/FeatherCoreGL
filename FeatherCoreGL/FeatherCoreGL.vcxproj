@@ -158,6 +158,8 @@
     <ClCompile Include="feather/core/CoreWindow.cpp" />
     <ClCompile Include="FeatherCoreGL.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="feather/core/Common.h" />
@@ -167,6 +169,10 @@
     <ClInclude Include="BgCos.h" />
     <ClInclude Include="feather/core/EBuffer.h" />
     <ClInclude Include="feather/core/Mesh.h" />
+    <ClInclude Include="feather/core/GpuMesh.h" />
+    <ClInclude Include="feather/core/RawTypes.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
