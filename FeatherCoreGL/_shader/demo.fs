@@ -26,13 +26,13 @@ void main()
         //FragColor = rt * texture(textureW1, TexCoord) + (1.0 - rt) * texture(textureW2, TexCoord);
 
         float contrast = 0.0f;
-        float globalIntensity = 0.38f - contrast;
+        float globalIntensity = 0.18f - contrast;
         vec3 globalLight = vec3(1.0, 1.0, 1.0);
         float lightRatio = 1.0f;
         
         float ambientIntensity = 0.85f + (contrast * 2);
         vec3 lightColor = vec3(1.0, 1.0, 1.0) * ambientIntensity;
-        vec3 lightPos = vec3(0, 6, 3);
+        vec3 lightPos = vec3(0, 3, 6);
         vec3 lightDir = normalize(lightPos - outPos);
         vec3 norm = normalize(outNormal);
 
@@ -45,7 +45,11 @@ void main()
         vec3 nn = vec3(0.07, 0.255, 0.08);
         vec3 vv = outPos;
 
-        if(opt == 0) {
+        if(opt <= 1) {
+            if(1 == opt)
+            {
+                aa = max(1.0 - dot(norm, vec3(0, 0, 1)), 0);
+            }
             FragColor = vec4(
                 modelColor.r * (diffuseColor.r + (texRatio)),
                 modelColor.g * (diffuseColor.g + (texRatio)),

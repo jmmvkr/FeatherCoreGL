@@ -27,6 +27,8 @@ typedef void(*fpPtr)(void*);
 typedef void(*fpVoid)();
 typedef void(*fpWindowOp)(GLFWwindow*);
 typedef void(*fpWindowResize)(GLFWwindow*, int w, int h);
+typedef int(*fpKeyApi)(int nKeyCode);
+
 
 namespace feather
 {

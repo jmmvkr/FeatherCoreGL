@@ -26,28 +26,47 @@ void Scene::init(void)
 
 void Scene::render(void)
 {
+	glm::mat4 proj = glm::mat4(1.0f);
+	glm::mat4 view = glm::mat4(1.0f);
+	glm::mat4 model = glm::mat4(1.0f);
+	BOOL bShift = getKey(GLFW_KEY_LEFT_SHIFT) || getKey(GLFW_KEY_RIGHT_SHIFT);
 
 	float aspectRatio = ((float)g_wnd.width / (float)g_wnd.height);
 
-	posEye = 6.0f;
-
-	glm::mat4 proj = glm::mat4(1.0f);
 	proj = glm::perspective(glm::radians<float>(45.0f), aspectRatio, 0.02f, 100.0f);
-
-	glm::mat4 view;
-
+	posEye = 6.0f;
 	calcView(&view, proj);
-
-	glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 	glUseProgram(p.prog);
 	glMatrixMode(GL_PROJECTION);
 
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+	if (testKey(GLFW_KEY_Z))
+	{
+		if (bShift)
+		{
+			opt = (1 + opt) % 2;
+			glUniform1i(glGetUniformLocation(p.prog, "opt"), opt);
+			bWireMode = FALSE;
+		}
+		else
+		{
+			bWireMode = !bWireMode;
+		}
+	}
 
-	glUniform1i(glGetUniformLocation(p.prog, "opt"), 0);
-	glUniform1i(glGetUniformLocation(p.prog, "bWireMode"), 0);
+	if (bWireMode)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glDisable(GL_CULL_FACE);
+	}
+	else
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+	}
+
+	glUniform1i(glGetUniformLocation(p.prog, "bWireMode"), bWireMode);
 
 	glUniformMatrix4fv(glGetUniformLocation(p.prog, "model"), 1, GL_FALSE, PTR_M(model));
 

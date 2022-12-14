@@ -19,6 +19,12 @@ private:
 	GpuMesh gm;
 	glm::vec4 tr;
 	float posEye;
+	int opt;
+	BOOL bWireMode;
+
+public:
+	fpKeyApi getKey;
+	fpKeyApi testKey;
 
 public:
 	void init(void);

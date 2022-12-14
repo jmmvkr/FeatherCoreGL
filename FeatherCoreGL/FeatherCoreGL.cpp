@@ -30,7 +30,9 @@ CoreWindow g_wnd = { 0 };
 BgEffect g_bg;
 KeyHold kPause = { 0, GLFW_KEY_SPACE };
 KeyHold kFullScr = { 0, GLFW_KEY_F11 };
+KeyHold arrKeyHold[1 + GLFW_KEY_LAST] = { 0 };
 Scene scene;
+
 
 
 // logic related to render context
@@ -59,12 +61,25 @@ int main()
 	return g_wnd.runApp();
 }
 
+int apiGetKey(int keyCode)
+{
+	return (GLFW_PRESS == glfwGetKey(g_wnd.pWnd, keyCode)) ? 1 : 0;
+}
+
+int apiTestKey(int keyCode)
+{
+	return KeyHold::testInput(g_wnd.pWnd, arrKeyHold[keyCode]);
+}
+
 void init(void)
 {
 	gladLoadGL();
 	g_bg.nMax = 60;
 	g_bg.cosEffect.color = BgCos::fromRgb(0.0f, 0.6f, 0.95f);
 
+	KeyHold::initKeyArray(arrKeyHold);
+	scene.getKey = apiGetKey;
+	scene.testKey = apiTestKey;
 	scene.init();
 }
 
