@@ -13,6 +13,9 @@
 using feather::core::CoreWindow;
 using feather::core::RenderContext;
 using feather::core::KeyHold;
+using feather::core::GlProgram;
+using feather::core::Shader;
+using feather::core::Mesh;
 
 
 // custom background effect
