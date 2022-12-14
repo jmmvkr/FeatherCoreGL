@@ -30,34 +30,86 @@ namespace feather
 				auto szMax = sizeof(buf);
 
 				fopen_s(pFile, relPath, mode);
-				if (pFile)
+				if (*pFile)
 				{
 					return;
 				}
 
+#ifdef _WIN64
 				int i;
 				auto len = GetCurrentDirectoryA((DWORD)szMax, buf);
 				char* ptr = &buf[len];
 
-				auto iEnd = sprintf_s(buf, sizeof(buf), "", ptr, relPath);
-				if (iEnd >= 0)
+				if ((1 + len) < sizeof(buf))
 				{
-					buf[iEnd] = '\0';
+					ptr[0] = '\\';
+					ptr[1] = '\0';
 				}
+
+				strcat_s(buf, sizeof(buf), relPath);
 				fopen_s(pFile, buf, mode);
+#endif
 			}
+
+			static st_Mesh load(const char* pthVb, const char* pthIb)
+			{
+				st_Mesh st = { 0 };
+				const char* fOpenMode = "rb";
+				FILE* fVb = NULL;
+				FILE* fIb = NULL;
+
+				tryOpen(&fVb, pthVb, fOpenMode);
+				tryOpen(&fIb, pthIb, fOpenMode);
+
+				EBuffer<char> bufVb;
+				EBuffer<char> bufIb;
+				int bLoaded = 0;
+				if (fVb && fIb)
+				{
+					bufVb = fullRead(fVb);
+					bufIb = fullRead(fIb);
+
+					auto convertedVb = EBuffer<VertexStride>::fromBuffer(bufVb, sizeof(VertexStride));
+					auto convertedIb = EBuffer<u16>::fromBuffer(bufIb, sizeof(u16));
+
+					if (convertedVb.data && convertedIb.data)
+					{
+						bLoaded = TRUE;
+					}
+
+					if (bLoaded)
+					{
+						st.vb = convertedVb;
+						st.ib = convertedIb;
+						st.bLoaded = TRUE;
+					}
+					else
+					{
+						convertedVb.freeBuffer();
+						convertedIb.freeBuffer();
+					}
+				}
+
+				if (fVb)
+				{
+					fclose(fVb);
+				}
+				if (fIb)
+				{
+					fclose(fIb);
+				}
+				return st;
+			}
+
 
 			static st_Mesh load(const char* path)
 			{
 				st_Mesh st = { 0 };
 				auto len = strlen(path);
 
-				const char* fOpenMode = "rb";
 				char pthVb[1 + MAX_CHAR];
 				char pthIb[1 + MAX_CHAR];
 
-				FILE* fVb = NULL;
-				FILE* fIb = NULL;
 				if (len >= 4)
 				{
 					// ensure extension (.vb or .ib) before loading
@@ -72,46 +124,7 @@ namespace feather
 					pthVb[len - 2] = 'v';
 					pthIb[len - 2] = 'i';
 
-					tryOpen(&fVb, pthVb, fOpenMode);
-					tryOpen(&fIb, pthIb, fOpenMode);
-
-					EBuffer<char> bufVb;
-					EBuffer<char> bufIb;
-					int bLoaded = 0;
-					if (fVb && fIb)
-					{
-						bufVb = fullRead(fVb);
-						bufIb = fullRead(fIb);
-
-						auto convertedVb = EBuffer<VertexStride>::fromBuffer(bufVb, sizeof(VertexStride));
-						auto convertedIb = EBuffer<u16>::fromBuffer(bufIb, sizeof(u16));
-
-						if (convertedVb.data && convertedIb.data)
-						{
-							bLoaded = TRUE;
-						}
-
-						if (bLoaded)
-						{
-							st.vb = convertedVb;
-							st.ib = convertedIb;
-							st.bLoaded = TRUE;
-						}
-						else
-						{
-							convertedVb.freeBuffer();
-							convertedIb.freeBuffer();
-						}
-					}
-
-					if (fVb)
-					{
-						fclose(fVb);
-					}
-					if (fIb)
-					{
-						fclose(fIb);
-					}
+					st = load((const char*)pthVb, (const char*)pthIb);
 				}
 
 				return st;
