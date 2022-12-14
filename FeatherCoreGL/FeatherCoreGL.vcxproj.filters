@@ -35,10 +35,16 @@
     <ClInclude Include="feather/core/CoreInput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h">
+    <ClInclude Include="feather/core/Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Common.h">
+    <ClInclude Include="feather/core/Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="feather/core/Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="feather/core/EBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

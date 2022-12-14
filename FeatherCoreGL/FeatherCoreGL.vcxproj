@@ -160,11 +160,13 @@
     <ClCompile Include="glad.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BgCos.h" />
     <ClInclude Include="feather/core/Common.h" />
     <ClInclude Include="feather/core/CoreWindow.h" />
     <ClInclude Include="feather/core/CoreInput.h" />
     <ClInclude Include="feather/core/Shader.h" />
+    <ClInclude Include="BgCos.h" />
+    <ClInclude Include="feather/core/EBuffer.h" />
+    <ClInclude Include="feather/core/Mesh.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

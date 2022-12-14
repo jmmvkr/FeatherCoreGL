@@ -7,6 +7,7 @@
 #include "feather/core/CoreInput.h"
 #include "feather/core/Shader.h"
 #include "BgCos.h"
+#include "feather/core/Mesh.h"
 
 
 using feather::core::CoreWindow;
@@ -31,6 +32,11 @@ CoreWindow g_wnd = { 0 };
 BgEffect g_bg;
 KeyHold kPause = { 0, GLFW_KEY_SPACE };
 KeyHold kFullScr = { 0, GLFW_KEY_F11 };
+
+// [TODO] move to Scene Manager
+GlProgram p;
+Mesh mesh;
+
 
 // logic related to render context
 void init(void);
@@ -64,8 +70,11 @@ void init(void)
 	g_bg.nMax = 60;
 	g_bg.cosEffect.color = BgCos::fromRgb(0.0f, 0.6f, 0.95f);
 
-	auto p = Shader::createProgram(L"_shader/demo.vs", L"_shader/demo.fs");
+	p = Shader::createProgram(L"_shader/demo.vs", L"_shader/demo.fs");
 	std::cout << " - shader linked? " << boolStr(p.bLinked) << NL;
+
+	mesh = Mesh::load("_media/mesh/ball.vb");
+	std::cout << " - mesh loaded? " << boolStr(mesh.bLoaded) << NL;
 }
 
 void render(void)
