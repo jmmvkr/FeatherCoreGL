@@ -172,6 +172,11 @@ namespace feather
 				return sz;
 			}
 
+			void freeBuffer()
+			{
+				vb.freeBuffer();
+				ib.freeBuffer();
+			}
 
 		} Mesh;
 	}
