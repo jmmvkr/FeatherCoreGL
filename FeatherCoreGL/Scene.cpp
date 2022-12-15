@@ -35,7 +35,7 @@ void Scene::update(void)
 	{
 		if (bShift)
 		{
-			opt = (1 + opt) % 2;
+			opt = (1 + opt) % 3;
 			glUniform1i(glGetUniformLocation(p.prog, "opt"), opt);
 			bWireMode = FALSE;
 		}

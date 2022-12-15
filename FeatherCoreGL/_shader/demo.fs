@@ -62,7 +62,7 @@ void main()
             {
                 if(length(vv - nn) < 0.05) aa = 0.5;
             }
-            FragColor = vec4(TexCoord.x, TexCoord.x, aa, 1.0);
+            FragColor = vec4(TexCoord.x, TexCoord.y, 1.0, 1.0);
         }
 
     }
