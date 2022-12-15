@@ -3,7 +3,6 @@
 
 #include "Mesh.h"
 #include "CoreWindow.h"
-#include "stb_image.h"
 
 
 using feather::core::Mesh;
