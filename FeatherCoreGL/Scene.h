@@ -22,6 +22,7 @@ private:
 	float aspectRatio;
 	int opt;
 	BOOL bWireMode;
+	float rollYaw;
 
 public:
 	fpKeyApi getKey;
@@ -36,5 +37,15 @@ public:
 
 private:
 	void calcView(glm::mat4* pView, glm::mat4 projection);
-	static void switchWireMode(BOOL bWireMode, GlProgram& p);
+	void switchWireMode(BOOL bWireMode, GlProgram& p);
+
+private:
+	typedef struct st_ShaderUniform {
+		GLuint pv;
+		GLuint model;
+		GLuint bWireMode;
+		GLuint opt;
+		GLuint viewDirection;
+	} ShaderUniform;
+	ShaderUniform addr;
 };

@@ -11,6 +11,7 @@ uniform sampler2D textureW2;
 uniform int bWireMode;
 uniform float rt;
 uniform int opt;
+uniform vec3 viewDirection;
 
 
 void main()
@@ -48,7 +49,7 @@ void main()
         if(opt <= 1) {
             if(1 == opt)
             {
-                aa = max(1.0 - dot(norm, vec3(0, 0, 1)), 0);
+                aa = max(1.0 - dot(norm, viewDirection), 0);
             }
             FragColor = vec4(
                 modelColor.r * (diffuseColor.r + (texRatio)),
