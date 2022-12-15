@@ -171,6 +171,7 @@
     <ClInclude Include="feather/core/Mesh.h" />
     <ClInclude Include="feather/core/GpuMesh.h" />
     <ClInclude Include="feather/core/RawTypes.h" />
+    <ClInclude Include="feather/core/RenderList.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="stb_image.h" />
   </ItemGroup>

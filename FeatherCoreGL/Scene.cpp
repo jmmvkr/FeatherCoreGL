@@ -7,6 +7,12 @@ using feather::core::GpuMesh;
 using feather::core::GpuUtil;
 
 
+void st_RenderAnchor::add(vec3 pos)
+{
+	RenderList* ptr = (RenderList*)ptrToRenderList;
+	ptr->addItem(resourceIndex, pos);
+}
+
 void Scene::init(void)
 {
 	p = Shader::createProgram(L"_shader/demo.vs", L"_shader/demo.fs");
@@ -16,13 +22,18 @@ void Scene::init(void)
 	mesh = Mesh::load("_media/mesh/ball-90.vx");
 	std::cout << " - mesh loaded? " << boolStr(mesh.bLoaded) << NL;
 
-	gm = GpuUtil::loadMesh(mesh);
-
-	gm.tex[0] = GpuUtil::loadTexture(0, "_media/tex/ball.png");
-	gm.tex[1] = gm.tex[0];
+	auto g = GpuUtil::loadMesh(mesh);
+	g.tex[0] = GpuUtil::loadTexture(0, "_media/tex/ball.png");
+	g.tex[1] = g.tex[0];
+	actors.addResource("ball", g);
+	
+	auto a = actors.findResource("ball");
+	a.add(glm::vec3(0.0f, 0.0f, 0.0f));
+	a.add(glm::vec3(3.0f, 0.0f, 0.0f));
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_DEPTH_TEST);
 
 	initUniforms(p.prog, addr);
 	switchWireMode(bWireMode, p);
@@ -81,6 +92,8 @@ void Scene::render(void)
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 model = glm::mat4(1.0f);
 
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	proj = glm::perspective(glm::radians<float>(45.0f), aspectRatio, 0.02f, 100.0f);
 	posEye = 6.0f;
 	calcView(&view, proj);
@@ -89,17 +102,25 @@ void Scene::render(void)
 	glMatrixMode(GL_PROJECTION);
 
 	auto viewDirection = proj * view * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
-	glUniformMatrix4fv(addr.model, 1, GL_FALSE, PTR_M(model));
 	glUniform3fv(addr.viewDirection, 1, PTR_V(viewDirection));
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, gm.tex[0]);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, gm.tex[1]);
+	auto lst = actors.itemList;
+	for (int i = 0, len = lst.size(); i < len; i++)
+	{
+		auto item = lst[i];
+		auto g = item.mesh;
 
-	glBindVertexArray(gm.vao);
-	glDrawElements(GL_TRIANGLES, gm.lenIndexBuffer, GL_UNSIGNED_SHORT, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, g.tex[0]);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, g.tex[1]);
 
+		model = glm::translate(glm::mat4(1.0f), item.position);
+		glUniformMatrix4fv(addr.model, 1, GL_FALSE, PTR_M(model));
+
+		glBindVertexArray(g.vao);
+		glDrawElements(GL_TRIANGLES, g.lenIndexBuffer, GL_UNSIGNED_SHORT, 0);
+	}
 }
 
 void Scene::onWindowResized(int w, int h)

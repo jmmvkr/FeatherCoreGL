@@ -3,6 +3,7 @@
 #include "feather/core/Shader.h"
 #include "feather/core/Mesh.h"
 #include "feather/core/GpuMesh.h"
+#include "feather/core/RenderList.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -16,13 +17,13 @@ class Scene
 private:
 	GlProgram p;
 	Mesh mesh;
-	GpuMesh gm;
 	glm::vec4 tr;
 	float posEye;
 	float aspectRatio;
 	int opt;
 	BOOL bWireMode;
 	float rollYaw;
+	RenderList actors;
 
 public:
 	fpKeyApi getKey;
