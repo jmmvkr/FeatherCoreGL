@@ -39,6 +39,7 @@ private:
 	void calcView(glm::mat4* pView, glm::mat4 projection);
 	void switchWireMode(BOOL bWireMode, GlProgram& p);
 
+// Uniforms
 private:
 	typedef struct st_ShaderUniform {
 		GLuint pv;
@@ -48,4 +49,5 @@ private:
 		GLuint viewDirection;
 	} ShaderUniform;
 	ShaderUniform addr;
+	static void initUniforms(GLint prog, ShaderUniform& addr);
 };

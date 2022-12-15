@@ -24,13 +24,17 @@ void Scene::init(void)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	auto prog = p.prog;
+	initUniforms(p.prog, addr);
+	switchWireMode(bWireMode, p);
+}
+
+void Scene::initUniforms(GLint prog, ShaderUniform& addr)
+{
 	addr.pv = glGetUniformLocation(prog, "pv");
 	addr.model = glGetUniformLocation(prog, "model");
 	addr.bWireMode = glGetUniformLocation(prog, "bWireMode");
 	addr.opt = glGetUniformLocation(prog, "opt");
 	addr.viewDirection = glGetUniformLocation(prog, "viewDirection");
-	switchWireMode(bWireMode, p);
 }
 
 static inline float vwrap(float v, float vMin, float vMax)
