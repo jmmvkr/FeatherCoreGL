@@ -22,23 +22,13 @@ void Scene::init(void)
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	switchWireMode(bWireMode, p);
 }
 
-void Scene::render(void)
+void Scene::update(void)
 {
-	glm::mat4 proj = glm::mat4(1.0f);
-	glm::mat4 view = glm::mat4(1.0f);
-	glm::mat4 model = glm::mat4(1.0f);
 	BOOL bShift = getKey(GLFW_KEY_LEFT_SHIFT) || getKey(GLFW_KEY_RIGHT_SHIFT);
-
-	float aspectRatio = ((float)g_wnd.width / (float)g_wnd.height);
-
-	proj = glm::perspective(glm::radians<float>(45.0f), aspectRatio, 0.02f, 100.0f);
-	posEye = 6.0f;
-	calcView(&view, proj);
-
-	glUseProgram(p.prog);
-	glMatrixMode(GL_PROJECTION);
 
 	if (testKey(GLFW_KEY_Z))
 	{
@@ -52,21 +42,22 @@ void Scene::render(void)
 		{
 			bWireMode = !bWireMode;
 		}
+		switchWireMode(bWireMode, p);
 	}
+}
 
-	if (bWireMode)
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glDisable(GL_CULL_FACE);
-	}
-	else
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-	}
+void Scene::render(void)
+{
+	glm::mat4 proj = glm::mat4(1.0f);
+	glm::mat4 view = glm::mat4(1.0f);
+	glm::mat4 model = glm::mat4(1.0f);
 
-	glUniform1i(glGetUniformLocation(p.prog, "bWireMode"), bWireMode);
+	proj = glm::perspective(glm::radians<float>(45.0f), aspectRatio, 0.02f, 100.0f);
+	posEye = 6.0f;
+	calcView(&view, proj);
+
+	glUseProgram(p.prog);
+	glMatrixMode(GL_PROJECTION);
 
 	glUniformMatrix4fv(glGetUniformLocation(p.prog, "model"), 1, GL_FALSE, PTR_M(model));
 
@@ -78,6 +69,11 @@ void Scene::render(void)
 	glBindVertexArray(gm.vao);
 	glDrawElements(GL_TRIANGLES, gm.lenIndexBuffer, GL_UNSIGNED_SHORT, 0);
 
+}
+
+void Scene::onWindowResized(int w, int h)
+{
+	aspectRatio = ((float)w / (float)h);
 }
 
 void Scene::calcView(glm::mat4* pView, glm::mat4 projection)
@@ -101,4 +97,21 @@ void Scene::calcView(glm::mat4* pView, glm::mat4 projection)
 	{
 		(*pView) = view;
 	}
+}
+
+void Scene::switchWireMode(BOOL bWireMode, GlProgram& p)
+{
+	if (bWireMode)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glDisable(GL_CULL_FACE);
+	}
+	else
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+	}
+
+	glUniform1i(glGetUniformLocation(p.prog, "bWireMode"), bWireMode);
 }

@@ -81,15 +81,18 @@ void init(void)
 	scene.getKey = apiGetKey;
 	scene.testKey = apiTestKey;
 	scene.init();
+	onResizeWindow(g_wnd.pWnd, g_wnd.width, g_wnd.height);
 }
 
 void render(void)
 {
 	BgEffect& bg = g_bg;
 	BgCos cos = bg.cosEffect;
+
 	cos.phi = BgCos::frame2Phi(bg.iCurFrame, bg.nMax, PI_X2);
 	cos.render();
 
+	scene.update();
 	scene.render();
 
 	if (!IS_PAUSED)
@@ -116,6 +119,7 @@ void onResizeWindow(GLFWwindow* window, int w, int h)
 	if ((w > 0) && (h > 0))
 	{
 		glViewport(0, 0, w, h);
+		scene.onWindowResized(w, h);
 	}
 }
 
