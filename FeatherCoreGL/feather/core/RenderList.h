@@ -39,6 +39,12 @@ namespace feather
 				meshList.push_back(gm);
 			}
 
+			RenderAnchor addAndFindResource(std::string name, GpuMesh gm)
+			{
+				addResource(name, gm);
+				return findResource(name);
+			}
+
 			RenderAnchor findResource(std::string name)
 			{
 				RenderAnchor ret = { 0 };

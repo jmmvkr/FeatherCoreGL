@@ -25,9 +25,8 @@ void Scene::init(void)
 	auto g = GpuUtil::loadMesh(mesh);
 	g.tex[0] = GpuUtil::loadTexture(0, "_media/tex/ball.png");
 	g.tex[1] = g.tex[0];
-	actors.addResource("ball", g);
-	
-	auto a = actors.findResource("ball");
+
+	auto a = actors.addAndFindResource("ball", g);
 	a.add(glm::vec3(0.0f, 0.0f, 0.0f));
 	a.add(glm::vec3(3.0f, 0.0f, 0.0f));
 
