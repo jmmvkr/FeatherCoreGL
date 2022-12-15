@@ -26,6 +26,7 @@ private:
 public:
 	fpKeyApi getKey;
 	fpKeyApi testKey;
+	RenderContext* pContext;
 
 public:
 	void init(void);

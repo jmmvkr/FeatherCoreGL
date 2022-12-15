@@ -78,6 +78,7 @@ void init(void)
 	g_bg.cosEffect.color = BgCos::fromRgb(0.0f, 0.6f, 0.95f);
 
 	KeyHold::initKeyArray(arrKeyHold);
+	scene.pContext = &g_wnd.ctx;
 	scene.getKey = apiGetKey;
 	scene.testKey = apiTestKey;
 	scene.init();
