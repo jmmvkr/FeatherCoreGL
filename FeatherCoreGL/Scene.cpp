@@ -12,7 +12,8 @@ void Scene::init(void)
 	p = Shader::createProgram(L"_shader/demo.vs", L"_shader/demo.fs");
 	std::cout << " - shader linked? " << boolStr(p.bLinked) << NL;
 
-	mesh = Mesh::load("_media/mesh/ball.vx");
+	//mesh = Mesh::load("_media/mesh/ball.vx");
+	mesh = Mesh::load("_media/mesh/ball-90.vx");
 	std::cout << " - mesh loaded? " << boolStr(mesh.bLoaded) << NL;
 
 	gm = GpuUtil::loadMesh(mesh);
