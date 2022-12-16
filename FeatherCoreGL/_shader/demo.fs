@@ -24,10 +24,9 @@ void main()
     else
     {
         vec4 modelColor = rt * texture(textureW1, TexCoord) + (1.0 - rt) * texture(textureW2, TexCoord);
-        //FragColor = rt * texture(textureW1, TexCoord) + (1.0 - rt) * texture(textureW2, TexCoord);
 
-        float contrast = 0.0f;
-        float globalIntensity = 0.18f - contrast;
+        float contrast = 0.25f;
+        float globalIntensity = 0.38f - contrast;
         vec3 globalLight = vec3(1.0, 1.0, 1.0);
         float lightRatio = 1.0f;
         
@@ -42,8 +41,6 @@ void main()
         vec3 diffuseColor = lightRatio * ((diffuse * lightColor) + (globalIntensity * globalLight));
         
         float aa = modelColor.a;
-
-        vec3 nn = vec3(0.07, 0.255, 0.08);
         vec3 vv = outPos;
 
         if(opt <= 1) {
@@ -58,11 +55,6 @@ void main()
                 aa
             );
         } else {
-            if(vv.x < 0) vv.x *= -1.0;
-            if(vv.z > 0.04)
-            {
-                if(length(vv - nn) < 0.05) aa = 0.5;
-            }
             FragColor = vec4(TexCoord.x, TexCoord.y, 1.0, 1.0);
         }
 
