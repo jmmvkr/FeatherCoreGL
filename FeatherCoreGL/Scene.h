@@ -24,6 +24,7 @@ private:
 	BOOL bWireMode;
 	float rollYaw;
 	RenderList actors;
+	std::map<float, int> sorted;
 
 public:
 	fpKeyApi getKey;
@@ -35,10 +36,6 @@ public:
 	void update(void);
 	void render(void);
 	void onWindowResized(int w, int h);
-
-private:
-	void calcView(glm::mat4* pView, glm::mat4 projection);
-	void switchWireMode(BOOL bWireMode, GlProgram& p);
 
 // Uniforms
 private:
@@ -52,4 +49,9 @@ private:
 	} ShaderUniform;
 	ShaderUniform addr;
 	static void initUniforms(GLint prog, ShaderUniform& addr);
+
+private:
+	glm::mat4 calcView(glm::mat4* pView, glm::mat4 projection);
+	void switchWireMode(BOOL bWireMode, GlProgram& p);
+	void renderGpuMesh(RenderItem& item, ShaderUniform& addr);
 };

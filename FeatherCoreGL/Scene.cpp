@@ -6,6 +6,8 @@ using feather::core::Mesh;
 using feather::core::GpuMesh;
 using feather::core::GpuUtil;
 
+#define ALPHA_OBJECT    (1)
+
 
 void st_RenderAnchor::add(vec3 pos, float scale, float texScale)
 {
@@ -25,6 +27,7 @@ void Scene::init(void)
 	auto g = GpuUtil::loadMesh(mesh);
 	g.tex[0] = GpuUtil::loadTexture(0, "_media/tex/ball.png");
 	g.tex[1] = g.tex[0];
+	g.flgBlendFunc = ALPHA_OBJECT;
 
 	auto a = actors.addAndFindResource("ball", g);
 	a.add(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -97,38 +100,45 @@ void Scene::render(void)
 {
 	glm::mat4 proj = glm::mat4(1.0f);
 	glm::mat4 view = glm::mat4(1.0f);
-	glm::mat4 model = glm::mat4(1.0f);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	proj = glm::perspective(glm::radians<float>(45.0f), aspectRatio, 0.02f, 100.0f);
 	posEye = 6.0f;
-	calcView(&view, proj);
+	auto pvMatrix = calcView(&view, proj);
 
 	glUseProgram(p.prog);
 	glMatrixMode(GL_PROJECTION);
 
-	auto viewDirection = proj * view * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
+	auto viewDirection = (pvMatrix) * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
 	glUniform3fv(addr.viewDirection, 1, PTR_V(viewDirection));
 
-	auto lst = actors.itemList;
-	for (int i = 0, len = lst.size(); i < len; i++)
+
+	// clean up resource for 2nd pass
+	sorted.clear();
+	auto eye4 = (pvMatrix) * glm::vec4(0.0f, 0.0f, posEye, 1.0f);
+	vec3 eye(eye4.x, eye4.y, eye4.z);
+
+	// 1st pass, opaque objects
+	for (int i = 0, len = actors.itemList.size(); i < len; i++)
 	{
-		auto item = lst[i];
-		auto g = item.mesh;
+		auto item = actors.itemList[i];
+		if (ALPHA_OBJECT != item.mesh.flgBlendFunc)
+		{
+			renderGpuMesh(item, addr);
+			continue;
+		}
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, g.tex[0]);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, g.tex[1]);
+		float distance = glm::length(eye - item.position);
+		sorted[distance] = i;
+	}
 
-		model = glm::translate(glm::mat4(1.0f), item.position);
-		model = glm::scale(model, item.scale);
-		glUniformMatrix4fv(addr.model, 1, GL_FALSE, PTR_M(model));
-		glUniform2f(addr.texScale, item.texScale.x, item.texScale.y);
-
-		glBindVertexArray(g.vao);
-		glDrawElements(GL_TRIANGLES, g.lenIndexBuffer, GL_UNSIGNED_SHORT, 0);
+	// 2nd pass, alpha objects
+	auto lst = actors.itemList;
+	for (std::map<float, int>::iterator it = sorted.begin(); it != sorted.end(); ++it)
+	{
+		auto item = lst[(*it).second];
+		renderGpuMesh(item, addr);
 	}
 }
 
@@ -143,7 +153,7 @@ void applyRotation(glm::mat4& mat, float yaw, float pitch)
 	mat = glm::rotate(mat, glm::radians(yaw), glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
-void Scene::calcView(glm::mat4* pView, glm::mat4 projection)
+glm::mat4 Scene::calcView(glm::mat4* pView, glm::mat4 projection)
 {
 	glm::mat4 view(1.0f);
 	glm::mat4 pv;
@@ -165,6 +175,7 @@ void Scene::calcView(glm::mat4* pView, glm::mat4 projection)
 	{
 		(*pView) = view;
 	}
+	return pv;
 }
 
 void Scene::switchWireMode(BOOL bWireMode, GlProgram& p)
@@ -182,4 +193,23 @@ void Scene::switchWireMode(BOOL bWireMode, GlProgram& p)
 	}
 
 	glUniform1i(addr.bWireMode, bWireMode);
+}
+
+void Scene::renderGpuMesh(RenderItem& item, Scene::ShaderUniform& addr)
+{
+	glm::mat4 model = glm::mat4(1.0f);
+	GpuMesh& g = item.mesh;
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, g.tex[0]);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, g.tex[1]);
+
+	model = glm::translate(glm::mat4(1.0f), item.position);
+	model = glm::scale(model, item.scale);
+	glUniformMatrix4fv(addr.model, 1, GL_FALSE, PTR_M(model));
+	glUniform2f(addr.texScale, item.texScale.x, item.texScale.y);
+
+	glBindVertexArray(g.vao);
+	glDrawElements(GL_TRIANGLES, g.lenIndexBuffer, GL_UNSIGNED_SHORT, 0);
 }
