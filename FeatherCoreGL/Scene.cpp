@@ -44,6 +44,7 @@ void Scene::init(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
 
+	bRotate = TRUE;
 	initUniforms(p.prog, addr);
 	switchWireMode(bWireMode, p);
 }
@@ -89,11 +90,18 @@ void Scene::update(void)
 		}
 		switchWireMode(bWireMode, p);
 	}
+	if (testKey(GLFW_KEY_R))
+	{
+		bRotate = !bRotate;
+	}
 
 	if (pContext->bPause){
 		return;
 	}
-	rollYaw = vwrap(rollYaw + 1.5f, 0.0f, 360.0f);
+	if (bRotate)
+	{
+		rollYaw = vwrap(rollYaw + 1.5f, 0.0f, 360.0f);
+	}
 }
 
 void Scene::render(void)

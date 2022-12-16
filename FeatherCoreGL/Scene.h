@@ -22,6 +22,7 @@ private:
 	float aspectRatio;
 	int opt;
 	BOOL bWireMode;
+	BOOL bRotate;
 	float rollYaw;
 	RenderList actors;
 	std::map<float, int> sorted;
