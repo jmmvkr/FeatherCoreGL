@@ -203,6 +203,69 @@ namespace feather
 				return texGpuId;
 			}
 
+			static GLuint createShadowFrameBuffer(int w, int h, GLuint* texOut)
+			{
+				BOOL bSuccess = FALSE;
+				GLuint depthMapFBO = 0;
+				GLuint depthMap = 0;
+
+				(*texOut) = 0;
+				glGenFramebuffers(1, &depthMapFBO);
+				if (depthMapFBO)
+				{
+					depthMap = createShadowTexture(w, h);
+					if (!depthMap)
+					{
+						goto cleanup;
+					}
+
+					glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+					glDrawBuffer(GL_NONE);
+					glReadBuffer(GL_NONE);
+
+					if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
+					{
+						bSuccess = TRUE;
+					}
+					glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				}
+
+			cleanup:
+				if (bSuccess)
+				{
+					(*texOut) = depthMap;
+					return depthMapFBO;
+				}
+				else
+				{
+					if (depthMapFBO)
+					{
+						glDeleteFramebuffers(1, &depthMapFBO);
+					}
+					if (depthMap)
+					{
+						glDeleteTextures(1, &depthMap);
+					}
+					return 0;
+				}
+			}
+
+			static GLuint createShadowTexture(int w, int h)
+			{
+				GLuint depthMap;
+				glGenTextures(1, &depthMap);
+
+				if (depthMap)
+				{
+					glBindTexture(GL_TEXTURE_2D, depthMap);
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, w, h, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+					texDepthMap();
+				}
+				return depthMap;
+			}
+
 			static void texLinearClamp()
 			{
 				// texture wraping
@@ -223,6 +286,14 @@ namespace feather
 				// texture filtering
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			}
+
+			static void texDepthMap()
+			{
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			}
 		};
 	}
