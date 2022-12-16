@@ -7,10 +7,10 @@ using feather::core::GpuMesh;
 using feather::core::GpuUtil;
 
 
-void st_RenderAnchor::add(vec3 pos)
+void st_RenderAnchor::add(vec3 pos, float scale, float texScale)
 {
 	RenderList* ptr = (RenderList*)ptrToRenderList;
-	ptr->addItem(resourceIndex, pos);
+	ptr->addItem(resourceIndex, pos, scale, texScale);
 }
 
 void Scene::init(void)
@@ -30,6 +30,13 @@ void Scene::init(void)
 	a.add(glm::vec3(0.0f, 0.0f, 0.0f));
 	a.add(glm::vec3(3.0f, 0.0f, 0.0f));
 
+	mesh = Mesh::load("_media/mesh/plane.vx");
+	auto pg = GpuUtil::loadMesh(mesh);
+	pg.tex[0] = GpuUtil::loadTexture(0, "_media/tex/tiles.png");
+	pg.tex[1] = pg.tex[0];
+	auto plane = actors.addAndFindResource("plane", pg);
+	plane.add(glm::vec3(0.0f, -1.5f, 0.0f), 4.0f, 4.0f);
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
@@ -45,6 +52,7 @@ void Scene::initUniforms(GLint prog, ShaderUniform& addr)
 	addr.bWireMode = glGetUniformLocation(prog, "bWireMode");
 	addr.opt = glGetUniformLocation(prog, "opt");
 	addr.viewDirection = glGetUniformLocation(prog, "viewDirection");
+	addr.texScale = glGetUniformLocation(prog, "texScale");
 }
 
 static inline float vwrap(float v, float vMin, float vMax)
@@ -115,7 +123,9 @@ void Scene::render(void)
 		glBindTexture(GL_TEXTURE_2D, g.tex[1]);
 
 		model = glm::translate(glm::mat4(1.0f), item.position);
+		model = glm::scale(model, item.scale);
 		glUniformMatrix4fv(addr.model, 1, GL_FALSE, PTR_M(model));
+		glUniform2f(addr.texScale, item.texScale.x, item.texScale.y);
 
 		glBindVertexArray(g.vao);
 		glDrawElements(GL_TRIANGLES, g.lenIndexBuffer, GL_UNSIGNED_SHORT, 0);

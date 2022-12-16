@@ -48,6 +48,7 @@ private:
 		GLuint bWireMode;
 		GLuint opt;
 		GLuint viewDirection;
+		GLuint texScale;
 	} ShaderUniform;
 	ShaderUniform addr;
 	static void initUniforms(GLint prog, ShaderUniform& addr);

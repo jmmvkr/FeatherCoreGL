@@ -10,6 +10,7 @@ out vec3 outNormal;
 
 uniform mat4 model;
 uniform mat4 pv;
+uniform vec2 texScale;
 
 void main()
 {
@@ -19,5 +20,5 @@ void main()
     outNormal = aNormal;
 
     vertexColor = vec3(1.0f, 1.f, 1.0f);
-    TexCoord = vec2(aTexCoord.x, aTexCoord.y);
+    TexCoord = vec2(aTexCoord.x * texScale.x, aTexCoord.y * texScale.y);
 }

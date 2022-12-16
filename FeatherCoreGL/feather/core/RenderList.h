@@ -8,6 +8,7 @@
 using std::vector;
 using std::map;
 using glm::vec3;
+using glm::vec2;
 
 
 namespace feather
@@ -18,13 +19,15 @@ namespace feather
 		typedef struct st_RenderItem {
 			GpuMesh mesh;
 			vec3 position;
+			vec3 scale;
+			vec2 texScale;
 		} RenderItem;
 
 		typedef struct st_RenderAnchor {
 			BOOL bFound;
 			int resourceIndex;
 			void* ptrToRenderList;
-			void add(vec3 pos);
+			void add(vec3 pos, float scale = 1.0f, float texScale = 1.0f);
 		} RenderAnchor;
 
 		typedef struct st_RenderList {
@@ -62,7 +65,7 @@ namespace feather
 				return ret;
 			}
 
-			void addItem(int idx, vec3 pos)
+			void addItem(int idx, vec3 pos, float scale, float texScale)
 			{
 				RenderItem it = { 0 };
 
@@ -73,6 +76,8 @@ namespace feather
 
 					it.mesh = gm;
 					it.position = pos;
+					it.scale = vec3(scale);
+					it.texScale = vec2(texScale);
 					itemList.push_back(it);
 				}
 			}
